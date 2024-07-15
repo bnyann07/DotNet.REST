@@ -1,0 +1,54 @@
+version: "3.4"
+
+networks:
+  dev:
+    driver: "bridge"
+
+services:
+  api:
+    image: netapi
+    depends_on:
+      - "app_db"
+    container_name: "api"
+    ports:
+      - "5152:5152"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ConnectionStrings__Default=User Id=postgres;Password=postgres;Server=app_db;Port=5432;Database=postgres; Pooling=true;
+      - ASPNETCORE_URLS=http://*:5152
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - dev
+  
+  app_db:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=postgres
+    ports:
+      - "5433:5432"
+    restart: always
+    volumes:
+      - app_data:/var/lib/postgresql/data
+    networks:
+      - dev
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@user.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - dev
+volumes:
+  app_data:
+  pgadmin_data:

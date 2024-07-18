@@ -13,6 +13,7 @@ namespace api.Mappers
             
             return new StockDto{
                 Id = stockModel.Id,
+                Purchase = stockModel.Purchase,
                 Ticker = stockModel.Ticker,
                 CompanyName = stockModel.CompanyName,
                 Industry = stockModel.Industry,
@@ -21,6 +22,7 @@ namespace api.Mappers
         }
         public static Stock ToStockFromCreateDto(this CreateStockRequestDto stockDto){
             return new Stock{
+                Purchase = stockDto.Purchase,
                 CompanyName = stockDto.CompanyName,
                 Ticker = stockDto.Ticker,
                 Industry = stockDto.Industry,

@@ -8,23 +8,23 @@ using api.Dtos.Stock;
 using api.Mappers;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers{
 
     [Route("api/stocks")]
     [ApiController]
     public class StockController : ControllerBase{
-
         private readonly ApplicationDBContext _context;
         public StockController(ApplicationDBContext context)
         {
             _context =context;
         }
         [HttpGet]
-        public IActionResult Getall(){
-            var stocks = _context.Stocks.ToList()
-            .Select(s => s.ToStockDto());
-            return Ok(stocks);   
+        public async Task<IActionResult> Getall(){
+            var stocks =  await _context.Stocks.ToListAsync();
+            var stockDto = stocks.Select(s => s.ToStockDto());
+            return Ok(stockDto);   
         }
         
         [HttpGet("{id}")]
@@ -33,7 +33,7 @@ namespace api.Controllers{
             if(stock == null){
                 return NotFound(stock);
             }
-            return Ok(stock);
+            return Ok(stock.ToStockDto());
         }
 
         [HttpPost]

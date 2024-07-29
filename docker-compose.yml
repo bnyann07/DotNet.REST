@@ -15,6 +15,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    # volumes:
+    #   - .:/app
     environment:
       - ConnectionStrings__Default=User Id=postgres;Password=postgres;Server=app_db;Port=5432;Database=postgres; Pooling=true;
       - ASPNETCORE_URLS=http://*:5152

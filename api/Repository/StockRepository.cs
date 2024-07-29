@@ -23,6 +23,11 @@ namespace api.Repository
             if(!string.IsNullOrWhiteSpace(query.Ticker)){
                 stocks = stocks.Where(s => s.Ticker.Contains(query.Ticker));
             }
+            if(!string.IsNullOrWhiteSpace(query.SortBy)){
+                if(query.SortBy.Equals("Ticker", StringComparison.OrdinalIgnoreCase)){
+                    stocks = query.IsDescending ? stocks.OrderByDescending(s =>s.Ticker) : stocks.OrderBy(s =>s.Ticker);
+                }
+            }
             return await stocks.ToListAsync();
         }
         public async Task<Stock?> GetByIdAsync(int id) {

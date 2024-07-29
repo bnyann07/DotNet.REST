@@ -28,7 +28,9 @@ namespace api.Repository
                     stocks = query.IsDescending ? stocks.OrderByDescending(s =>s.Ticker) : stocks.OrderBy(s =>s.Ticker);
                 }
             }
-            return await stocks.ToListAsync();
+
+            var skipNumber = (query.PageNumber - 1) * query.PageSize;
+            return await stocks.Skip(skipNumber).Take(query.PageSize).ToListAsync();
         }
         public async Task<Stock?> GetByIdAsync(int id) {
             return await _context.Stocks.Include(c => c.Comments).FirstOrDefaultAsync(s => s.Id == id);

@@ -8,7 +8,12 @@ services:
   api:
     image: netapi
     depends_on:
-      - "app_db"
+      app_db:
+        condition: service_started
+      prometheus:
+        condition: service_healthy
+      grafana:
+        condition: service_healthy
     container_name: "api"
     ports:
       - "5152:5152"
@@ -23,7 +28,62 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     networks:
       - dev
+
+  grafana:
+    container_name: grafana
+    user: "472"
+    image: grafana/grafana
+    networks:
+      - dev
+    ports:
+      - "3000:3000"
+    volumes:
+      # - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      # - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      # - grafana_datasources:/etc/grafana/provisioning/datasources
+      # - grafana_dashboards:/etc/grafana/provisioning/dashboards
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    healthcheck:
+      test: wget -q --tries=1 -O- http://localhost:3000/
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
   
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: always
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    links:
+      - cadvisor:cadvisor
+      - alertmanager:alertmanager
+#      - pushgateway:pushgateway
+    depends_on:
+      - cadvisor
+#     - pushgateway
+    networks:
+      - dev
+    healthcheck:
+      test: wget -q --tries=1 -O- http://localhost:9090/
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
   app_db:
     container_name: postgres
     image: postgres:latest
@@ -51,6 +111,62 @@ services:
       - pgadmin_data:/var/lib/pgadmin
     networks:
       - dev
+
+
+  alertmanager:
+    image: prom/alertmanager
+    ports:
+      - 9093:9093
+    volumes:
+      - ./alertmanager/:/etc/alertmanager/
+    networks:
+      - dev
+    restart: always
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.hostname == ${HOSTNAME}
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - 8080:8080
+    networks:
+      - dev
+    restart: always
+    deploy:
+      mode: global
+  
+  node-exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /:/host:ro,rslave
+    command: 
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc' 
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    ports:
+      - 9100:9100
+    networks:
+      - dev
+    restart: always
+    deploy:
+      mode: global
+
 volumes:
   app_data:
   pgadmin_data:
+  grafana_data:
+  prometheus_data:

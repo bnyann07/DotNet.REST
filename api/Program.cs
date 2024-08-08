@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using OpenTelemetry.Metrics;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +58,14 @@ builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
+// add metrics related to HTTP
+builder.Services.AddOpenTelemetry()
+    .WithMetrics(metric =>
+    {
+        metric.AddPrometheusExporter();
+        metric.AddMeter("Microsoft.AspNetCore.Hosting", "Microsoft.AspNetCore.Server.Kestrel");
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -90,6 +100,8 @@ app.MapGet("/weatherforecast", () =>
 .WithOpenApi();
 
 app.MapControllers();
+app.UseHsts();
+app.MapPrometheusScrapingEndpoint();
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)

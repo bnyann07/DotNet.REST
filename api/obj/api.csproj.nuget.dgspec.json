@@ -80,9 +80,29 @@
               "target": "Package",
               "version": "[8.0.4, )"
             },
+            "OpenTelemetry.Exporter.Prometheus.AspNetCore": {
+              "target": "Package",
+              "version": "[1.7.0-alpha.1, )"
+            },
+            "OpenTelemetry.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[1.7.0-alpha.1, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.4.0, )"
+            },
+            "prometheus-net": {
+              "target": "Package",
+              "version": "[8.2.1, )"
+            },
+            "prometheus-net.AspNetCore": {
+              "target": "Package",
+              "version": "[8.2.1, )"
+            },
+            "prometheus-net.AspNetCore.HealthChecks": {
+              "target": "Package",
+              "version": "[8.2.1, )"
             }
           },
           "imports": [

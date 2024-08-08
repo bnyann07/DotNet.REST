@@ -293,3 +293,11 @@
 /Users/bertrandnyann/DotNetPlayground/DotNet.REST/api/bin/Debug/net8.0/Microsoft.Extensions.Identity.Core.dll
 /Users/bertrandnyann/DotNetPlayground/DotNet.REST/api/bin/Debug/net8.0/Microsoft.Extensions.Identity.Stores.dll
 /Users/bertrandnyann/DotNetPlayground/DotNet.REST/api/bin/Debug/net8.0/Microsoft.Extensions.Options.dll
+/Users/bertrandnyann/DotNetPlayground/DotNet.REST/api/bin/Debug/net8.0/OpenTelemetry.dll
+/Users/bertrandnyann/DotNetPlayground/DotNet.REST/api/bin/Debug/net8.0/OpenTelemetry.Api.dll
+/Users/bertrandnyann/DotNetPlayground/DotNet.REST/api/bin/Debug/net8.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll
+/Users/bertrandnyann/DotNetPlayground/DotNet.REST/api/bin/Debug/net8.0/OpenTelemetry.Exporter.Prometheus.AspNetCore.dll
+/Users/bertrandnyann/DotNetPlayground/DotNet.REST/api/bin/Debug/net8.0/OpenTelemetry.Extensions.Hosting.dll
+/Users/bertrandnyann/DotNetPlayground/DotNet.REST/api/bin/Debug/net8.0/Prometheus.NetStandard.dll
+/Users/bertrandnyann/DotNetPlayground/DotNet.REST/api/bin/Debug/net8.0/Prometheus.AspNetCore.dll
+/Users/bertrandnyann/DotNetPlayground/DotNet.REST/api/bin/Debug/net8.0/Prometheus.AspNetCore.HealthChecks.dll
